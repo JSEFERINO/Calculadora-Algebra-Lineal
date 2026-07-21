@@ -153,9 +153,7 @@ def kernel_imagen(A):
         tol = 1e-10
         rango = np.sum(s > tol)
         kernel = vh[rango:].T
-
         imagen = A[:, :rango]
-
         return kernel, imagen, rango, "Kernel e Imagen calculados"
     except Exception as e:
         return None, None, None, f"Error: {str(e)}"
@@ -785,62 +783,64 @@ with tab7:
 # ============================================================
 
 with tab8:
-    st.markdown("""
-    # 📖 Guía de Uso - Álgebra Lineal
+    st.write(
+        """
+        # 📖 Guía de Uso - Álgebra Lineal
 
-    ## 📊 Formatos de Ingreso
+        ## 📊 Formatos de Ingreso
 
-    ### Matrices
-    - Filas separadas por `;`
-    - Elementos separados por `,`
-    - Ejemplo: `1,2,3;4,5,6;7,8,9`
+        ### Matrices
+        - Filas separadas por `;`
+        - Elementos separados por `,`
+        - Ejemplo: `1,2,3;4,5,6;7,8,9`
 
-    ### Vectores
-    - Elementos separados por `,`
-    - Ejemplo: `1,2,3`
+        ### Vectores
+        - Elementos separados por `,`
+        - Ejemplo: `1,2,3`
 
-    ## 📌 Todas las Operaciones Disponibles
+        ## 📌 Todas las Operaciones Disponibles
 
-    ### Matrices
-    - ✅ Transpuesta, Hermitiana
-    - ✅ Traza, Determinante, Inversa
-    - ✅ Rango, Norma, Condición
-    - ✅ Suma, Resta, Multiplicación
-    - ✅ Producto por escalar, Potencia
-    - ✅ Producto de Hadamard
-    - ✅ Producto de Kronecker
+        ### Matrices
+        - ✅ Transpuesta, Hermitiana
+        - ✅ Traza, Determinante, Inversa
+        - ✅ Rango, Norma, Condición
+        - ✅ Suma, Resta, Multiplicación
+        - ✅ Producto por escalar, Potencia
+        - ✅ Producto de Hadamard
+        - ✅ Producto de Kronecker
 
-    ### Vectores
-    - ✅ Suma, Resta, Producto escalar
-    - ✅ Producto vectorial (R³)
-    - ✅ Norma, Vector unitario
-    - ✅ Ángulo, Proyección
-    - ✅ Dependencia Lineal
-    - ✅ Gram-Schmidt (ortogonalización)
+        ### Vectores
+        - ✅ Suma, Resta, Producto escalar
+        - ✅ Producto vectorial (R³)
+        - ✅ Norma, Vector unitario
+        - ✅ Ángulo, Proyección
+        - ✅ Dependencia Lineal
+        - ✅ Gram-Schmidt (ortogonalización)
 
-    ### Sistemas
-    - ✅ Solución Ax=b
-    - ✅ Mínimos cuadrados
-    - ✅ Compatibilidad
+        ### Sistemas
+        - ✅ Solución Ax=b
+        - ✅ Mínimos cuadrados
+        - ✅ Compatibilidad
 
-    ### Transformaciones
-    - ✅ Kernel (Núcleo)
-    - ✅ Imagen (Rango)
-    - ✅ Inyectividad/Sobreyectividad
-    - ✅ Cambio de base
-    - ✅ Aplicar a vector
+        ### Transformaciones
+        - ✅ Kernel (Núcleo)
+        - ✅ Imagen (Rango)
+        - ✅ Inyectividad/Sobreyectividad
+        - ✅ Cambio de base
+        - ✅ Aplicar a vector
 
-    ### Matrices Especiales
-    - ✅ Hilbert
-    - ✅ Vandermonde
-    - ✅ Exponencial de matriz
-    - ✅ Ajuste polinomial
+        ### Matrices Especiales
+        - ✅ Hilbert
+        - ✅ Vandermonde
+        - ✅ Exponencial de matriz
+        - ✅ Ajuste polinomial
 
-    ### Propiedades
-    - ✅ Simetría, Ortogonalidad
-    - ✅ Definida Positiva/Negativa
-    - ✅ Diagonal Dominante
-    - ✅ Matriz de Markov
-    - ✅ Matriz de Permutación
-    - ✅ Análisis PCA
-    ''")
+        ### Propiedades
+        - ✅ Simetría, Ortogonalidad
+        - ✅ Definida Positiva/Negativa
+        - ✅ Diagonal Dominante
+        - ✅ Matriz de Markov
+        - ✅ Matriz de Permutación
+        - ✅ Análisis PCA
+        """
+    )
