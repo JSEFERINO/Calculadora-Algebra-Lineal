@@ -61,7 +61,6 @@ def formatear_matriz(mat, decimales=6):
         return "No disponible"
     if isinstance(mat, str):
         return mat
-    # Limpiar ceros
     mat = mat.copy()
     mat[np.abs(mat) < 1e-10] = 0
     return np.round(mat, decimales)
@@ -150,13 +149,11 @@ def dependencia_lineal(vectores):
 def kernel_imagen(A):
     """Calcula kernel e imagen"""
     try:
-        # Kernel usando SVD
         u, s, vh = svd(A)
         tol = 1e-10
         rango = np.sum(s > tol)
         kernel = vh[rango:].T
 
-        # Imagen
         imagen = A[:, :rango]
 
         return kernel, imagen, rango, "Kernel e Imagen calculados"
@@ -232,12 +229,10 @@ def ajuste_polinomial(x, y, grado):
         if len(x) <= grado:
             return None, "Error: Se necesitan más datos que el grado del polinomio"
 
-        # Matriz de diseño
         X = np.zeros((len(x), grado + 1))
         for i in range(grado + 1):
             X[:, i] = x ** i
 
-        # Solución por mínimos cuadrados
         coef = np.linalg.lstsq(X, y, rcond=None)[0]
         y_pred = X @ coef
         r2 = 1 - np.sum((y - y_pred)**2) / np.sum((y - np.mean(y))**2)
@@ -249,17 +244,12 @@ def ajuste_polinomial(x, y, grado):
 def analisis_pca(X):
     """Análisis de Componentes Principales"""
     try:
-        # Centrar datos
         X_cent = X - np.mean(X, axis=0)
-        # Matriz de covarianza
         S = np.cov(X_cent, rowvar=False)
-        # Eigen descomposición
         eigen_vals, eigen_vecs = np.linalg.eig(S)
-        # Ordenar por valor propio
         idx = np.argsort(eigen_vals)[::-1]
         eigen_vals = eigen_vals[idx]
         eigen_vecs = eigen_vecs[:, idx]
-        # Componentes principales
         componentes = X_cent @ eigen_vecs
         varianza_explicada = eigen_vals / np.sum(eigen_vals)
 
@@ -318,18 +308,17 @@ with tab1:
             else:
                 st.session_state['mat_A'] = A
                 st.session_state['mat_B'] = B
-                st.session_state['escalar_mat'] = escalar
+                st.session_state['escalar_val'] = escalar
                 st.success("✅ Cálculo completado")
 
     with col2:
         if 'mat_A' in st.session_state:
             A = st.session_state['mat_A']
             B = st.session_state['mat_B']
-            escalar = st.session_state['escalar_mat']
+            escalar = st.session_state.get('escalar_val', 2.0)
 
             st.subheader("📊 Resultados")
 
-            # Mostrar matrices
             st.write("**Matriz A:**")
             st.code(matriz_a_texto(A))
 
@@ -337,14 +326,11 @@ with tab1:
                 st.write("**Matriz B:**")
                 st.code(matriz_a_texto(B))
 
-            # Operaciones básicas
             st.write("**Operaciones:**")
 
-            # Transpuesta
-            st.write(f"**Transpuesta:**")
+            st.write("**Transpuesta:**")
             st.code(matriz_a_texto(A.T))
 
-            # Traza
             if A.shape[0] == A.shape[1]:
                 st.write(f"**Traza:** {np.trace(A):.6f}")
                 st.write(f"**Determinante:** {np.linalg.det(A):.6f}")
@@ -356,28 +342,22 @@ with tab1:
                 except:
                     st.write("**Inversa:** Singular (no invertible)")
 
-            # Rango
             st.write(f"**Rango:** {np.linalg.matrix_rank(A)}")
-
-            # Norma
             st.write(f"**Norma (Frobenius):** {np.linalg.norm(A, 'fro'):.6f}")
 
-            # Condición
             if A.shape[0] == A.shape[1]:
                 st.write(f"**Condición:** {np.linalg.cond(A):.6f}")
 
-            # Producto por escalar
             st.write(f"**Producto por escalar ({escalar}):**")
             st.code(matriz_a_texto(escalar * A))
 
-            # Operaciones con B
             if B is not None:
                 if A.shape == B.shape:
                     st.write("**Suma A+B:**")
                     st.code(matriz_a_texto(A + B))
                     st.write("**Resta A-B:**")
                     st.code(matriz_a_texto(A - B))
-                    st.write("**Producto de Hadamard (elemento a elemento):**")
+                    st.write("**Producto de Hadamard:**")
                     st.code(matriz_a_texto(A * B))
 
                 if A.shape[1] == B.shape[0]:
@@ -422,14 +402,14 @@ with tab2:
             else:
                 st.session_state['vec_u'] = u
                 st.session_state['vec_v'] = v
-                st.session_state['escalar_vec'] = escalar_vec
+                st.session_state['escalar_vec_val'] = escalar_vec
                 st.success("✅ Cálculo completado")
 
     with col2:
         if 'vec_u' in st.session_state:
             u = st.session_state['vec_u']
             v = st.session_state['vec_v']
-            escalar_vec = st.session_state['escalar_vec']
+            escalar_vec = st.session_state.get('escalar_vec_val', 2.0)
 
             st.subheader("📊 Resultados")
 
@@ -439,16 +419,13 @@ with tab2:
 
             st.write("**Operaciones:**")
 
-            # Norma
             st.write(f"**Norma de u:** {np.linalg.norm(u):.6f}")
             if v is not None:
                 st.write(f"**Norma de v:** {np.linalg.norm(v):.6f}")
 
-            # Vector unitario
             if np.linalg.norm(u) > 0:
                 st.write(f"**Vector unitario de u:** {u/np.linalg.norm(u)}")
 
-            # Producto por escalar
             st.write(f"**Producto por escalar ({escalar_vec}):** {escalar_vec * u}")
 
             if v is not None and len(u) == len(v):
@@ -456,29 +433,24 @@ with tab2:
                 st.write(f"**Resta u-v:** {u - v}")
                 st.write(f"**Producto escalar (u·v):** {np.dot(u, v):.6f}")
 
-                # Ángulo
                 if np.linalg.norm(u) > 0 and np.linalg.norm(v) > 0:
                     cos_theta = np.dot(u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
                     cos_theta = np.clip(cos_theta, -1, 1)
                     angulo = np.arccos(cos_theta)
                     st.write(f"**Ángulo entre u y v:** {angulo:.6f} rad ({angulo*180/np.pi:.6f}°)")
 
-                # Proyección
                 if np.linalg.norm(v) > 0:
                     proy = (np.dot(u, v) / np.linalg.norm(v)**2) * v
                     st.write(f"**Proyección de u sobre v:** {proy}")
 
-                # Producto vectorial (R³)
                 if len(u) == 3 and len(v) == 3:
                     cross = np.cross(u, v)
                     st.write(f"**Producto vectorial (u×v):** {cross}")
 
-                # Dependencia lineal
                 matriz_vect = np.column_stack([u, v])
                 dep, rango, dim, msg = dependencia_lineal(matriz_vect)
                 st.write(f"**Dependencia Lineal:** {msg}")
 
-                # Gram-Schmidt
                 ortog, orton, msg_gs = gram_schmidt(matriz_vect)
                 if ortog is not None:
                     st.write("**Gram-Schmidt (Base Ortogonal):**")
@@ -533,14 +505,12 @@ with tab3:
             st.write("**Vector b:**")
             st.write(b.tolist())
 
-            # Resolver sistema
             sol, msg = resolver_sistema(A, b)
             st.write(f"**Sistema Ax = b:**")
             st.write(f"  {msg}")
             if sol is not None:
                 st.write(f"  **Solución:** {sol}")
 
-            # Mínimos cuadrados
             sol_mc, residuos, msg_mc = minimos_cuadrados(A, b)
             st.write(f"**Mínimos Cuadrados:**")
             st.write(f"  {msg_mc}")
@@ -593,7 +563,6 @@ with tab4:
             st.write("**Matriz de Transformación:**")
             st.code(matriz_a_texto(A))
 
-            # Kernel e Imagen
             kernel, imagen, rango, msg = kernel_imagen(A)
             st.write(f"**{msg}**")
             st.write(f"**Rango:** {rango}")
@@ -609,7 +578,6 @@ with tab4:
                 st.write("**Imagen (Rango):**")
                 st.code(matriz_a_texto(imagen))
 
-            # Inyectividad y Sobreyectividad
             if A.shape[0] == A.shape[1]:
                 if np.linalg.matrix_rank(A) == A.shape[1]:
                     st.write("**Inyectiva:** Sí (matriz invertible)")
@@ -626,7 +594,6 @@ with tab4:
                 st.write(f"**Sobreyectiva:** {sob}")
                 st.write(f"**Biyectiva:** {'Sí' if iny == 'Sí' and sob == 'Sí' else 'No'}")
 
-            # Transformación aplicada
             if v is not None:
                 if len(v) == A.shape[1]:
                     st.write("**Transformación aplicada a v:**")
@@ -666,18 +633,15 @@ with tab5:
 
             st.subheader("📊 Resultados")
 
-            # Matriz de Hilbert
             H = matriz_hilbert(n)
             st.write(f"**Matriz de Hilbert ({n}×{n}):**")
             st.code(matriz_a_texto(H))
 
-            # Matriz de Vandermonde
             x = np.arange(1, n+1)
             V = matriz_vandermonde(x)
             st.write(f"**Matriz de Vandermonde ({n}×{n}):**")
             st.code(matriz_a_texto(V))
 
-            # Exponencial de matriz
             if A is not None and A.shape[0] == A.shape[1]:
                 try:
                     exp_A = linalg.expm(A)
@@ -686,7 +650,6 @@ with tab5:
                 except:
                     st.write("**Exponencial de matriz:** Error en el cálculo")
 
-            # Ajuste polinomial
             if A is not None and A.shape[0] >= 3:
                 x = np.arange(1, A.shape[0]+1)
                 y = A[:, 0]
@@ -742,14 +705,12 @@ with tab6:
             st.write("**Matriz:**")
             st.code(matriz_a_texto(A))
 
-            # Propiedades
             props = verificar_propiedades(A)
             st.write("**Propiedades:**")
             for key, value in props.items():
                 icon = "✅" if value else "❌"
                 st.write(f"  {icon} {key.replace('_', ' ').title()}: {'Sí' if value else 'No'}")
 
-            # PCA
             if pca_data is not None and pca_data.shape[0] > 1 and pca_data.shape[1] > 1:
                 componentes, var_exp, loadings, msg = analisis_pca(pca_data)
                 if componentes is not None:
@@ -776,11 +737,10 @@ with tab7:
         if st.button("🎲 Generar", key="btn_random"):
             A = np.random.randn(n_filas_rand, n_columnas_rand)
             st.session_state['rand_A'] = A
-            st.success("🎲 Matriz aleatoria generada")
 
-            # Generar B para operaciones
             B = np.random.randn(n_filas_rand, 3)
             st.session_state['rand_B'] = B
+            st.success("🎲 Matriz aleatoria generada")
 
     with col2:
         if 'rand_A' in st.session_state:
@@ -797,7 +757,6 @@ with tab7:
 
             st.write("**Operaciones:**")
 
-            # Concatenar
             try:
                 concat = np.column_stack([A, B])
                 st.write("**Concatenar (A|B):**")
@@ -805,7 +764,6 @@ with tab7:
             except:
                 st.write("**Concatenar (A|B):** Error en dimensiones")
 
-            # Apilar
             try:
                 apilar = np.row_stack([A, B])
                 st.write("**Apilar (A/B):**")
@@ -813,7 +771,6 @@ with tab7:
             except:
                 st.write("**Apilar (A/B):** Error en dimensiones")
 
-            # Redimensionar
             total = A.size
             n_nuevo = int(np.round(np.sqrt(total)))
             if n_nuevo * n_nuevo == total:
@@ -886,4 +843,4 @@ with tab8:
     - ✅ Matriz de Markov
     - ✅ Matriz de Permutación
     - ✅ Análisis PCA
-    """)
+    ''")
